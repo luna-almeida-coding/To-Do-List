@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_list_squad_premiun/design_system/colors/app_colors.dart';
 import 'package:to_do_list_squad_premiun/design_system/widgets/buttons/app_button.dart';
-import 'package:to_do_list_squad_premiun/features/domain/entities/to_do_entity.dart';
+import 'package:to_do_list_squad_premiun/features/to_do_list/domain/entities/to_do_entity.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
