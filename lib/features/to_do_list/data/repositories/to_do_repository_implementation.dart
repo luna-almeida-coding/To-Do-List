@@ -18,4 +18,13 @@ class ToDoRepositoryImplementation implements IToDoRepository {
       return Left(GenericFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> updateToDoList() async {
+    try {
+      return Right(await datasource.updateToDoList());
+    } on GenericException {
+      return Left(GenericFailure());
+    }
+  }
 }

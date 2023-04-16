@@ -21,33 +21,65 @@ void main() {
     },
   );
 
-  test(
-    'Should return a  List of To Do/s model  from the datasource',
-    () async {
-      when(() => datasource.getToDoList()).thenAnswer(
-        (_) async => mockTodoListModel,
-      );
+  group('Get ToDo List', () {
+    test(
+      'Should return a  List of To Do/s model  from the datasource',
+      () async {
+        when(() => datasource.getToDoList()).thenAnswer(
+          (_) async => mockTodoListModel,
+        );
 
-      final result = await repository.getToDoList();
+        final result = await repository.getToDoList();
 
-      expect(result, Right(mockTodoListModel));
+        expect(result, Right(mockTodoListModel));
 
-      verify(() => datasource.getToDoList()).called(1);
-    },
-  );
+        verify(() => datasource.getToDoList()).called(1);
+      },
+    );
 
-  test(
-    'Should return a Generic Failure when calls to datasource goes wrong',
-    () async {
-      when(() => datasource.getToDoList()).thenThrow(
-        GenericException(),
-      );
+    test(
+      'Should return a Generic Failure when calls to datasource goes wrong',
+      () async {
+        when(() => datasource.getToDoList()).thenThrow(
+          GenericException(),
+        );
 
-      final result = await repository.getToDoList();
+        final result = await repository.getToDoList();
 
-      expect(result, Left(GenericFailure()));
+        expect(result, Left(GenericFailure()));
 
-      verify(() => datasource.getToDoList()).called(1);
-    },
-  );
+        verify(() => datasource.getToDoList()).called(1);
+      },
+    );
+  });
+
+  group('Update ToDo List', () {
+    test(
+      'Should return true when successful update ToDoList from the datasource',
+      () async {
+        when(() => datasource.updateToDoList()).thenAnswer(
+          (_) async => true,
+        );
+
+        final result = await repository.updateToDoList();
+
+        expect(result, const Right(true));
+        verify(() => datasource.updateToDoList()).called(1);
+      },
+    );
+
+    test(
+      'Should return a Generic Exception when unsuccessful update ToDoList from the datasource',
+      () async {
+        when(() => datasource.updateToDoList()).thenThrow(
+          GenericException(),
+        );
+
+        final result = await repository.updateToDoList();
+
+        expect(result, Left(GenericFailure()));
+        verify(() => datasource.updateToDoList()).called(1);
+      },
+    );
+  });
 }
