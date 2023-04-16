@@ -22,12 +22,12 @@ void main() {
     'Should get a list of To Do\'s from the repository',
     () async {
       when(() => repository.getToDoList()).thenAnswer(
-        (_) async => Right(toDoEntityListMock),
+        (_) async => Right(mockToDoEntityList),
       );
 
       final result = await usecase();
 
-      expect(result, Right(toDoEntityListMock));
+      expect(result, Right(mockToDoEntityList));
 
       verify(() => repository.getToDoList()).called(1);
     },

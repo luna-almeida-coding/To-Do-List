@@ -5,5 +5,5 @@ import 'package:to_do_list_squad_premiun/features/to_do_list/domain/entities/to_
 abstract class IToDoRepository {
   Future<Either<Failure, List<ToDoEntity>>> getToDoList();
 
-  Future<Either<Failure, bool>> updateToDoList();
+  Future<Either<Failure, bool>> updateToDoList(List<ToDoEntity> list);
 }

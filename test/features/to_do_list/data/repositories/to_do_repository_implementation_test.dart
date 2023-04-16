@@ -57,28 +57,28 @@ void main() {
     test(
       'Should return true when successful update ToDoList from the datasource',
       () async {
-        when(() => datasource.updateToDoList()).thenAnswer(
+        when(() => datasource.updateToDoList(mockToDoEntityList)).thenAnswer(
           (_) async => true,
         );
 
-        final result = await repository.updateToDoList();
+        final result = await repository.updateToDoList(mockToDoEntityList);
 
         expect(result, const Right(true));
-        verify(() => datasource.updateToDoList()).called(1);
+        verify(() => datasource.updateToDoList(mockToDoEntityList)).called(1);
       },
     );
 
     test(
       'Should return a Generic Exception when unsuccessful update ToDoList from the datasource',
       () async {
-        when(() => datasource.updateToDoList()).thenThrow(
+        when(() => datasource.updateToDoList(mockToDoEntityList)).thenThrow(
           GenericException(),
         );
 
-        final result = await repository.updateToDoList();
+        final result = await repository.updateToDoList(mockToDoEntityList);
 
         expect(result, Left(GenericFailure()));
-        verify(() => datasource.updateToDoList()).called(1);
+        verify(() => datasource.updateToDoList(mockToDoEntityList)).called(1);
       },
     );
   });

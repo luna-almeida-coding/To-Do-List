@@ -20,9 +20,9 @@ class ToDoRepositoryImplementation implements IToDoRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateToDoList() async {
+  Future<Either<Failure, bool>> updateToDoList(List<ToDoEntity> list) async {
     try {
-      return Right(await datasource.updateToDoList());
+      return Right(await datasource.updateToDoList(list));
     } on GenericException {
       return Left(GenericFailure());
     }
