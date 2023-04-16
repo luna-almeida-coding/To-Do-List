@@ -1,11 +1,11 @@
 part of 'to_do_list_cubit.dart';
 
 class ToDoListState extends Equatable {
-  final List<ToDoEntity>? toDoList;
+  final List<ToDoEntity> toDoList;
   final bool isLoading;
 
   const ToDoListState({
-    this.toDoList,
+    this.toDoList = const [],
     this.isLoading = false,
   });
 

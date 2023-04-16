@@ -27,7 +27,7 @@ void main() {
         (_) async => const Right(true),
       );
 
-      final result = await usecase.updateToDoList(mockToDoEntityList);
+      final result = await usecase.call(mockToDoEntityList);
 
       expect(result, const Right(true));
 
@@ -42,7 +42,7 @@ void main() {
         (_) async => Left(GenericFailure()),
       );
 
-      final result = await usecase.updateToDoList(mockToDoEntityList);
+      final result = await usecase.call(mockToDoEntityList);
 
       expect(result, Left(GenericFailure()));
 

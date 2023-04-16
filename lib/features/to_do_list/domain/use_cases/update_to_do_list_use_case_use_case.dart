@@ -8,7 +8,7 @@ class UpdateToDoListUsecase {
 
   UpdateToDoListUsecase(this.repository);
 
-  Future<Either<Failure, bool>> updateToDoList(List<ToDoEntity> list) async {
+  Future<Either<Failure, bool>> call(List<ToDoEntity> list) async {
     return await repository.updateToDoList(list);
   }
 }
