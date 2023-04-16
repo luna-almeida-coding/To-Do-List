@@ -1,3 +1,4 @@
+import 'package:to_do_list_squad_premiun/core/constants/constants.dart';
 import 'package:to_do_list_squad_premiun/core/local_storage/local_storage.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/data/models/to_do_model.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/domain/entities/to_do_entity.dart';
@@ -15,7 +16,7 @@ class ToDoDatasource implements IToDoDatasource {
 
   @override
   Future<List<ToDoModel>> getToDoList() async {
-    final result = await localStorage.read(key: 'ToDoList');
+    final result = await localStorage.read(key: defaultToDoListKey);
     List<ToDoModel> toDoModelList = [];
 
     toDoModelList.addAll(result);
@@ -32,7 +33,7 @@ class ToDoDatasource implements IToDoDatasource {
     }
 
     return await localStorage.write(
-      key: 'ToDoList',
+      key: defaultToDoListKey,
       data: modelList,
     );
   }
