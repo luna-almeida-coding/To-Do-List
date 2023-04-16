@@ -25,14 +25,7 @@ class ToDoListCubit extends Cubit<ToDoListState> {
     final result = await toDoListUseCase();
 
     result.fold(
-      (l) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            toDoList: [],
-          ),
-        );
-      },
+      (l) => _errorHandler(l.errorMessage),
       (r) {
         return emit(
           state.copyWith(
@@ -53,14 +46,45 @@ class ToDoListCubit extends Cubit<ToDoListState> {
     final result = await updateToDoListUseCase(newToDoList);
 
     result.fold(
-      (l) => null,
-      (r) {
+      (l) => _errorHandler(l.errorMessage),
+      (_) {
         emit(
           state.copyWith(
             toDoList: newToDoList,
           ),
         );
       },
+    );
+  }
+
+  Future<void> removeToDoItem(int index) async {
+    List<ToDoEntity> newList = [];
+
+    newList.addAll(state.toDoList);
+
+    newList.removeAt(index);
+
+    final result = await updateToDoListUseCase(newList);
+
+    result.fold(
+      (l) => _errorHandler(l.errorMessage),
+      (_) {
+        emit(
+          state.copyWith(
+            toDoList: newList,
+            isLoading: false,
+          ),
+        );
+      },
+    );
+  }
+
+  void _errorHandler(String? errorMessage) {
+    emit(
+      state.copyWith(
+        isLoading: false,
+        errorMessage: errorMessage ?? '',
+      ),
     );
   }
 }

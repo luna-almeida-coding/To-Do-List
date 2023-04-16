@@ -9,6 +9,8 @@ abstract class Failure extends Equatable {
 }
 
 class GenericFailure extends Failure {
+  const GenericFailure({super.errorMessage});
+
   @override
   List<Object?> get props => [];
 }

@@ -15,27 +15,36 @@ class MockUpdateToDoListUsecase extends Mock implements UpdateToDoListUsecase {}
 
 void main() {
   late ToDoListCubit cubit;
-  late GetToDoListUseCase useCase;
+  late GetToDoListUseCase getToDoListUseCase;
   late UpdateToDoListUsecase updateToDoListUsecase;
 
-  Future<void> successfulCallArrange() async {
-    when(() => useCase()).thenAnswer(
-      (_) async => Right(mockToDoEntityList),
+  Future<void> successfulGetToDoListArrange() async {
+    when(() => getToDoListUseCase()).thenAnswer(
+      (_) async => const Right(mockToDoEntityList),
     );
   }
 
-  Future<void> unSuccessfulCallArrange() async {
-    when(() => useCase()).thenAnswer(
-      (_) async => Left(GenericFailure()),
+  Future<void> unSuccessfulGetToDoListCallArrange() async {
+    when(() => getToDoListUseCase()).thenAnswer(
+      (_) async {
+        return const Left(
+          GenericFailure(errorMessage: 'Generic Error'),
+        );
+      },
     );
+  }
+
+  Future<void> setToDoListInCubitState() async {
+    await successfulGetToDoListArrange();
+    await cubit.getToDoList();
   }
 
   setUp(
     () {
-      useCase = MockToDoListUseCase();
+      getToDoListUseCase = MockToDoListUseCase();
       updateToDoListUsecase = MockUpdateToDoListUsecase();
       cubit = ToDoListCubit(
-        toDoListUseCase: useCase,
+        toDoListUseCase: getToDoListUseCase,
         updateToDoListUseCase: updateToDoListUsecase,
       );
     },
@@ -44,45 +53,147 @@ void main() {
   group(
     'ToDoList Cubit',
     () {
-      test(
-        'ToDoListState should have a list of ToDo\'s when call to usecase succeed',
-        () async {
-          await successfulCallArrange();
-          await cubit.getToDoList();
-          expect(cubit.state.toDoList, mockToDoEntityList);
-          expect(cubit.state.isLoading, false);
-        },
-      );
+      group(
+        'Get ToDo List',
+        () {
+          test(
+            'ToDoListState should have a list of ToDo\'s when call to usecase succeed',
+            () async {
+              await successfulGetToDoListArrange();
 
-      test(
-        'Loading should ended after calls get ToDo list is completed',
-        () async {
-          await unSuccessfulCallArrange();
-          await cubit.getToDoList();
-          expect(cubit.state.isLoading, false);
-        },
-      );
+              await cubit.getToDoList();
 
-      test(
-        'Should correctly add a new To Do item in todoList state',
-        () async {
-          expect(cubit.state.toDoList, []);
+              expect(cubit.state.toDoList, mockToDoEntityList);
+              expect(cubit.state.isLoading, false);
 
-          List<ToDoEntity> newList = [];
-          ToDoEntity newItem = const ToDoEntity(description: 'Eat', isCompleted: false);
-
-          newList.add(newItem);
-
-          when(() => updateToDoListUsecase(newList)).thenAnswer(
-            (_) async => const Right(true),
+              verify(() => getToDoListUseCase()).called(1);
+            },
           );
 
-          await cubit.updateToDoList(newItem);
+          test(
+            'Should have a errorMessage state when calls to getToDoList function goes wrong',
+            () async {
+              await unSuccessfulGetToDoListCallArrange();
 
-          expect(cubit.state.toDoList.length, 1);
-          expect(cubit.state.isLoading, false);
+              when(() => getToDoListUseCase()).thenAnswer(
+                (_) async {
+                  return const Left(
+                    GenericFailure(
+                      errorMessage: 'Generic error message',
+                    ),
+                  );
+                },
+              );
 
-          verify(() => updateToDoListUsecase(newList)).called(1);
+              await cubit.getToDoList();
+
+              expect(cubit.state.errorMessage, isNotEmpty);
+              expect(cubit.state.isLoading, false);
+            },
+          );
+        },
+      );
+
+      group(
+        'Update ToDo List',
+        () {
+          test(
+            'Should correctly add a new To Do item in todoList state',
+            () async {
+              expect(cubit.state.toDoList, []);
+
+              List<ToDoEntity> newList = [];
+
+              newList.add(mockNewToDoItem);
+
+              when(() => updateToDoListUsecase(newList)).thenAnswer(
+                (_) async => const Right(true),
+              );
+
+              await cubit.updateToDoList(mockNewToDoItem);
+
+              expect(cubit.state.toDoList.length, 1);
+              expect(cubit.state.isLoading, false);
+
+              verify(() => updateToDoListUsecase(newList)).called(1);
+            },
+          );
+
+          test(
+            'Should have a errorMessage state when calls to updateList function goes wrong',
+            () async {
+              List<ToDoEntity> newList = [];
+
+              newList.add(mockNewToDoItem);
+
+              when(() => updateToDoListUsecase(newList)).thenAnswer(
+                (_) async {
+                  return const Left(
+                    GenericFailure(
+                      errorMessage: 'Generic error message',
+                    ),
+                  );
+                },
+              );
+
+              await cubit.updateToDoList(mockNewToDoItem);
+
+              expect(cubit.state.errorMessage, isNotEmpty);
+              expect(cubit.state.isLoading, false);
+              verify(() => updateToDoListUsecase(newList)).called(1);
+            },
+          );
+
+          test(
+            'Should correctly remove a item from todoList state for a given index',
+            () async {
+              await setToDoListInCubitState();
+
+              expect(cubit.state.toDoList.length, mockToDoEntityList.length);
+
+              List<ToDoEntity> newList = [];
+
+              newList.addAll(mockToDoEntityList);
+              newList.removeAt(0);
+
+              when(() => updateToDoListUsecase(newList)).thenAnswer(
+                (_) async => const Right(true),
+              );
+
+              await cubit.removeToDoItem(0);
+
+              expect(cubit.state.toDoList.length, newList.length);
+              expect(cubit.state.isLoading, false);
+              verify(() => updateToDoListUsecase(newList)).called(1);
+            },
+          );
+
+          test(
+            'Should have a errorMessage state when calls to remove function goes wrong',
+            () async {
+              await setToDoListInCubitState();
+              List<ToDoEntity> newList = [];
+
+              newList.addAll(mockToDoEntityList);
+              newList.removeAt(0);
+
+              when(() => updateToDoListUsecase(newList)).thenAnswer(
+                (_) async {
+                  return const Left(
+                    GenericFailure(
+                      errorMessage: 'Generic error message',
+                    ),
+                  );
+                },
+              );
+
+              await cubit.removeToDoItem(0);
+
+              expect(cubit.state.errorMessage, isNotEmpty);
+              expect(cubit.state.isLoading, false);
+              verify(() => updateToDoListUsecase(newList)).called(1);
+            },
+          );
         },
       );
     },
