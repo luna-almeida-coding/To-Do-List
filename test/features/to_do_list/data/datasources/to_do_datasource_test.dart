@@ -36,4 +36,16 @@ void main() {
       expect(result, mockTodoListModel);
     },
   );
+  test(
+    'Should return true if ToDoList was successful updated from the Local Storage',
+    () async {
+      when(() => localStorage.write(key: 'ToDoList', data: mockTodoListModel)).thenAnswer(
+        (_) async => true,
+      );
+
+      final result = await datasource.updateToDoList(mockToDoEntityList);
+
+      expect(result, true);
+    },
+  );
 }

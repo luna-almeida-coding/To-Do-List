@@ -5,4 +5,11 @@ class ToDoModel extends ToDoEntity {
     required super.description,
     required super.isCompleted,
   });
+
+  factory ToDoModel.fromEntity(ToDoEntity entity) {
+    return ToDoModel(
+      description: entity.description,
+      isCompleted: entity.isCompleted,
+    );
+  }
 }
