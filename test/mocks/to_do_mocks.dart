@@ -14,3 +14,9 @@ const List<ToDoModel> mockTodoListModel = [
 ];
 
 const ToDoEntity mockNewToDoItem = ToDoEntity(description: 'Eat', isCompleted: false);
+
+const List<String> toDoListString = [
+  "{\"description\":\"Clean the house\",\"isCompleted\":true}",
+  "{\"description\":\"Exercise\",\"isCompleted\":false}",
+  "{\"description\":\"Sleep\",\"isCompleted\":false}",
+];

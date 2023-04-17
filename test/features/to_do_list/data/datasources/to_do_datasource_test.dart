@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list_squad_premiun/core/constants/constants.dart';
 import 'package:to_do_list_squad_premiun/core/local_storage/local_storage.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/data/datasources/to_do_datasource.dart';
+import 'package:to_do_list_squad_premiun/features/to_do_list/data/models/to_do_model.dart';
 
 import '../../../../mocks/to_do_mocks.dart';
 
@@ -24,12 +25,12 @@ void main() {
     'Should return a List of ToDoModel from the Local Storage',
     () async {
       final Map<String, Object> values = <String, Object>{
-        defaultToDoListKey: mockTodoListModel,
+        defaultToDoListKey: toDoListString,
       };
 
       SharedPreferences.setMockInitialValues(values);
       when(() => localStorage.read(key: defaultToDoListKey)).thenAnswer(
-        (_) async => mockTodoListModel,
+        (_) async => toDoListString,
       );
 
       final result = await datasource.getToDoList();
@@ -37,10 +38,18 @@ void main() {
       expect(result, mockTodoListModel);
     },
   );
+
   test(
     'Should return true if ToDoList was successful updated from the Local Storage',
     () async {
-      when(() => localStorage.write(key: defaultToDoListKey, data: mockTodoListModel)).thenAnswer(
+      List<String> modelList = [];
+
+      for (var i in mockToDoEntityList) {
+        modelList.add(
+          ToDoModel.fromEntity(i).toJson().toString(),
+        );
+      }
+      when(() => localStorage.write(key: defaultToDoListKey, data: modelList)).thenAnswer(
         (_) async => true,
       );
 
