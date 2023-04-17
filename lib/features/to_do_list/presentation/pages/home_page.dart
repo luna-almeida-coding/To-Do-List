@@ -13,8 +13,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController toDoController = TextEditingController();
+
+  late ToDoListCubit toDoListCubit;
+
   @override
   void initState() {
+    toDoListCubit = context.read<ToDoListCubit>();
+
     getInitialToDoList();
     super.initState();
   }
@@ -62,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildListButtons() {
     Widget buildAllListButton() {
       return AppButton(
-        onTap: () => context.read<ToDoListCubit>().filterToDoList(FilterTypes.all),
+        onTap: () => toDoListCubit.filterToDoList(FilterTypes.all),
         text: 'All',
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -75,7 +81,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget buildPendingListButton() {
       return AppButton(
-        onTap: () => context.read<ToDoListCubit>().filterToDoList(FilterTypes.pending),
+        onTap: () => toDoListCubit.filterToDoList(FilterTypes.pending),
         text: 'pending',
         shape: const RoundedRectangleBorder(),
       );
@@ -83,7 +89,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget buildDoneListButton() {
       return AppButton(
-        onTap: () => context.read<ToDoListCubit>().filterToDoList(FilterTypes.done),
+        onTap: () => toDoListCubit.filterToDoList(FilterTypes.done),
         text: 'done',
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -105,29 +111,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildToDoList() {
-    Widget buildToDoItem({
-      String? text,
-      bool isCompleted = false,
-    }) {
-      return Row(
-        children: [
-          Checkbox(
-            value: isCompleted,
-            onChanged: (value) {
-              //TODO: Add checkbox implementation
-            },
-          ),
-          const SizedBox(width: 10),
-          Text(
-            text ?? '',
-            style: TextStyle(
-              decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-            ),
-          ),
-        ],
-      );
-    }
-
     return BlocBuilder<ToDoListCubit, ToDoListState>(
       builder: (context, state) {
         if (state.isLoading) return const Center(child: CircularProgressIndicator());
@@ -138,9 +121,26 @@ class _HomePageState extends State<HomePage> {
 
         return ListView.separated(
           itemBuilder: (context, index) {
-            return buildToDoItem(
-              text: state.filteredList[index].description,
-              isCompleted: state.filteredList[index].isCompleted,
+            return CheckboxListTile(
+              title: Text(
+                state.filteredList[index].description,
+                style: TextStyle(
+                  decoration: state.filteredList[index].isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                ),
+              ),
+              secondary: IconButton(
+                onPressed: () => toDoListCubit.removeToDoItem(index),
+                icon: const Icon(
+                  Icons.delete_outline,
+                ),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              value: state.filteredList[index].isCompleted,
+              onChanged: (newValue) {
+                setState(() {
+                  toDoListCubit.updateToDoItemStatus(index: index, isCompleted: newValue!);
+                });
+              },
             );
           },
           separatorBuilder: (context, index) {
@@ -154,13 +154,55 @@ class _HomePageState extends State<HomePage> {
 
   Widget get _buildAddToDoItemButton {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () async => _buildAddToDoDialog(),
       backgroundColor: AppColors.darkBlue,
       tooltip: "Add To Do",
       child: const Icon(
         Icons.add,
         color: AppColors.white,
       ),
+    );
+  }
+
+  Future _buildAddToDoDialog() {
+    Future<void> addToDo() async {
+      if (toDoController.text.isNotEmpty) {
+        await toDoListCubit.addToDoItemToList(
+          ToDoEntity(
+            description: toDoController.text.trim(),
+            isCompleted: false,
+          ),
+        );
+        Navigator.pop(context);
+        toDoController.clear();
+      }
+    }
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(
+            child: Text('Adicionar To Do'),
+          ),
+          content: SizedBox(
+            height: 50,
+            child: TextField(
+              controller: toDoController,
+              autofocus: true,
+            ),
+          ),
+          actions: [
+            Center(
+              child: AppButton(
+                isSelected: true,
+                onTap: () async => addToDo(),
+                text: 'Adicionar',
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

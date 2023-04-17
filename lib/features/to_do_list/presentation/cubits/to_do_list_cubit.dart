@@ -6,12 +6,6 @@ import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/up
 
 part 'to_do_list_state.dart';
 
-enum FilterTypes {
-  all,
-  pending,
-  done,
-}
-
 class ToDoListCubit extends Cubit<ToDoListState> {
   final GetToDoListUseCase toDoListUseCase;
   final UpdateToDoListUsecase updateToDoListUseCase;
@@ -74,7 +68,7 @@ class ToDoListCubit extends Cubit<ToDoListState> {
     }
   }
 
-  Future<void> updateToDoList(ToDoEntity newItem) async {
+  Future<void> addToDoItemToList(ToDoEntity newItem) async {
     List<ToDoEntity> newToDoList = [];
 
     newToDoList.addAll(state.toDoList);
@@ -97,12 +91,6 @@ class ToDoListCubit extends Cubit<ToDoListState> {
 
   Future<void> removeToDoItem(int index) async {
     List<ToDoEntity> newList = [];
-    emit(
-      state.copyWith(
-        toDoList: newList,
-        isLoading: false,
-      ),
-    );
 
     newList.addAll(state.toDoList);
 
@@ -117,6 +105,36 @@ class ToDoListCubit extends Cubit<ToDoListState> {
           state.copyWith(
             toDoList: newList,
             isLoading: false,
+            filteredList: _sortToDoList(newList),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> updateToDoItemStatus({
+    required int index,
+    required bool isCompleted,
+  }) async {
+    List<ToDoEntity> newList = [];
+
+    newList.addAll(state.filteredList);
+
+    newList[index] = ToDoEntity(
+      description: newList[index].description,
+      isCompleted: isCompleted,
+    );
+
+    final result = await updateToDoListUseCase(newList);
+    result.fold(
+      (l) => _errorHandler(l.errorMessage),
+      (r) {
+        filterToDoList(state.currentFilter);
+
+        emit(
+          state.copyWith(
+            toDoList: newList,
+            filteredList: _sortToDoList(newList),
           ),
         );
       },
