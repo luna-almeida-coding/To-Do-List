@@ -11,20 +11,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<ToDoEntity> _todoList = [
-    ToDoEntity(
-      description: 'descrption',
-      isCompleted: false,
-    ),
-    ToDoEntity(
-      description: 'descrption',
-      isCompleted: true,
-    ),
-    ToDoEntity(
-      description: 'descrption',
-      isCompleted: true,
-    ),
-  ];
+  @override
+  void initState() {
+    getInitialToDoList();
+    super.initState();
+  }
+
+  Future<void> getInitialToDoList() async {
+    await context.read<ToDoListCubit>().getToDoList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,17 +126,27 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    return ListView.separated(
-      itemBuilder: (context, index) {
-        return buildToDoItem(
-          text: _todoList[index].description,
-          isCompleted: _todoList[index].isCompleted,
+    return BlocBuilder<ToDoListCubit, ToDoListState>(
+      builder: (context, state) {
+        if (state.isLoading) return const Center(child: CircularProgressIndicator());
+
+        if (state.toDoList.isEmpty) return Container();
+
+        if (state.errorMessage.isNotEmpty) return Container();
+
+        return ListView.separated(
+          itemBuilder: (context, index) {
+            return buildToDoItem(
+              text: state.filteredList[index].description,
+              isCompleted: state.filteredList[index].isCompleted,
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider();
+          },
+          itemCount: state.filteredList.length,
         );
       },
-      separatorBuilder: (context, index) {
-        return const Divider();
-      },
-      itemCount: _todoList.length,
     );
   }
 

@@ -6,6 +6,12 @@ import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/up
 
 part 'to_do_list_state.dart';
 
+enum FilterTypes {
+  all,
+  pending,
+  done,
+}
+
 class ToDoListCubit extends Cubit<ToDoListState> {
   final GetToDoListUseCase toDoListUseCase;
   final UpdateToDoListUsecase updateToDoListUseCase;
@@ -31,10 +37,37 @@ class ToDoListCubit extends Cubit<ToDoListState> {
           state.copyWith(
             toDoList: r,
             isLoading: false,
+            filteredList: r,
           ),
         );
       },
     );
+  }
+
+  void filterToDoList(FilterTypes filterType) {
+    switch (filterType) {
+      case FilterTypes.done:
+        emit(
+          state.copyWith(
+            filteredList: state.toDoList.where((element) => element.isCompleted).toList(),
+          ),
+        );
+        break;
+      case FilterTypes.all:
+        emit(
+          state.copyWith(
+            filteredList: state.toDoList,
+          ),
+        );
+        break;
+      case FilterTypes.pending:
+        emit(
+          state.copyWith(
+            filteredList: state.toDoList.where((element) => !element.isCompleted).toList(),
+          ),
+        );
+        break;
+    }
   }
 
   Future<void> updateToDoList(ToDoEntity newItem) async {
