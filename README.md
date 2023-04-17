@@ -22,4 +22,4 @@ A simple To Do List App developed with Flutter + TDD and Clean Architecture
 
 ### How to run the unit tests 📀
 
-* Run `flutter run test` in your terminal
+* Run `flutter test` in your terminal
