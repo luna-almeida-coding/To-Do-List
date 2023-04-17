@@ -4,7 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:to_do_list_squad_premiun/core/errors/failures/failure.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/domain/entities/to_do_entity.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/get_to_do_list_use_case.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/update_to_do_list_use_case_use_case.dart';
+import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/update_to_do_list_use_case.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/presentation/cubits/to_do_list_cubit.dart';
 
 import '../../../../mocks/to_do_mocks.dart';

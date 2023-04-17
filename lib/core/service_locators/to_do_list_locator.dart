@@ -5,7 +5,7 @@ import 'package:to_do_list_squad_premiun/features/to_do_list/data/datasources/to
 import 'package:to_do_list_squad_premiun/features/to_do_list/data/repositories/to_do_repository_implementation.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/domain/repositories/i_to_do_repository.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/get_to_do_list_use_case.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/update_to_do_list_use_case_use_case.dart';
+import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/update_to_do_list_use_case.dart';
 import 'package:to_do_list_squad_premiun/features/to_do_list/presentation/cubits/to_do_list_cubit.dart';
 
 Future<void> setUpToDoListLocators() async {
