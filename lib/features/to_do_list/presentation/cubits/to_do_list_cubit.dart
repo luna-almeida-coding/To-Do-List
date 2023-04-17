@@ -26,6 +26,7 @@ class ToDoListCubit extends Cubit<ToDoListState> {
       state.copyWith(
         toDoList: [],
         isLoading: true,
+        currentFilter: FilterTypes.all,
       ),
     );
     final result = await toDoListUseCase();
@@ -33,11 +34,11 @@ class ToDoListCubit extends Cubit<ToDoListState> {
     result.fold(
       (l) => _errorHandler(l.errorMessage),
       (r) {
-        return emit(
+        emit(
           state.copyWith(
             toDoList: r,
             isLoading: false,
-            filteredList: r,
+            filteredList: _sortToDoList(r),
           ),
         );
       },
@@ -49,6 +50,7 @@ class ToDoListCubit extends Cubit<ToDoListState> {
       case FilterTypes.done:
         emit(
           state.copyWith(
+            currentFilter: filterType,
             filteredList: state.toDoList.where((element) => element.isCompleted).toList(),
           ),
         );
@@ -56,13 +58,15 @@ class ToDoListCubit extends Cubit<ToDoListState> {
       case FilterTypes.all:
         emit(
           state.copyWith(
-            filteredList: state.toDoList,
+            currentFilter: filterType,
+            filteredList: _sortToDoList(state.toDoList),
           ),
         );
         break;
       case FilterTypes.pending:
         emit(
           state.copyWith(
+            currentFilter: filterType,
             filteredList: state.toDoList.where((element) => !element.isCompleted).toList(),
           ),
         );
@@ -86,12 +90,19 @@ class ToDoListCubit extends Cubit<ToDoListState> {
             toDoList: newToDoList,
           ),
         );
+        filterToDoList(state.currentFilter);
       },
     );
   }
 
   Future<void> removeToDoItem(int index) async {
     List<ToDoEntity> newList = [];
+    emit(
+      state.copyWith(
+        toDoList: newList,
+        isLoading: false,
+      ),
+    );
 
     newList.addAll(state.toDoList);
 
@@ -119,5 +130,17 @@ class ToDoListCubit extends Cubit<ToDoListState> {
         errorMessage: errorMessage ?? '',
       ),
     );
+  }
+
+  List<ToDoEntity> _sortToDoList(List<ToDoEntity> list) {
+    List<ToDoEntity> sortedlist = list;
+    sortedlist.sort(
+      (a, b) => a.isCompleted == b.isCompleted
+          ? 0
+          : a.isCompleted
+              ? 1
+              : -1,
+    );
+    return sortedlist;
   }
 }
