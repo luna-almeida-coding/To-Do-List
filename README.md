@@ -1,16 +1,25 @@
-# to_do_list_squad_premiun
 
-Technical Test
+# To Do List
 
-## Getting Started
+A simple To Do List App developed with Flutter + TDD and Clean Architecture
 
-This project is a starting point for a Flutter application.
+### Tech Stacks 👩‍💻
+* Flutter 3
+* Clean Architecture
+* Bloc
+* Shared Preferences
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### How to run 💿
+* Make sure to have installed and settled the Flutter Environment for your current OS (Windows / MacOS / Linux). If not, take a look in this [documentation](https://docs.flutter.dev/). It's pretty easy 😎
+* Clone the repository locally
+* Open the cloned repository in your IDE / Editor 
+	* Recommended: [Android Studio](https://developer.android.com/studio), [VSCode](https://code.visualstudio.com/)
+* Run in your terminal `flutter pub get` to install all the dependencies
+* Open your emulator
+* Run `flutter run` or you can also press the run button in your IDE / Editor
+* And enjoy it 😊
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### How to run the unit tests 📀
+
+* Run `flutter run test` in your terminal
