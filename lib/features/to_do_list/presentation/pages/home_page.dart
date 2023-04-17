@@ -52,22 +52,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody() {
-    return Container(
-      color: AppColors.lightBlue,
-      padding: const EdgeInsets.all(15),
-      child: Column(
-        children: [
-          _buildListButtons(),
-          const SizedBox(height: 20),
-          Expanded(child: _buildToDoList()),
-        ],
-      ),
+    return BlocBuilder<ToDoListCubit, ToDoListState>(
+      builder: (context, state) {
+        return Container(
+          color: AppColors.lightBlue,
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              _buildListButtons(state),
+              const SizedBox(height: 20),
+              Expanded(child: _buildToDoList()),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildListButtons() {
+  Widget _buildListButtons(ToDoListState state) {
     Widget buildAllListButton() {
       return AppButton(
+        isSelected: state.currentFilter == FilterTypes.all,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.all),
         text: 'All',
         shape: const RoundedRectangleBorder(
@@ -81,6 +86,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget buildPendingListButton() {
       return AppButton(
+        isSelected: state.currentFilter == FilterTypes.pending,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.pending),
         text: 'pending',
         shape: const RoundedRectangleBorder(),
@@ -89,6 +95,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget buildDoneListButton() {
       return AppButton(
+        isSelected: state.currentFilter == FilterTypes.done,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.done),
         text: 'done',
         shape: const RoundedRectangleBorder(
