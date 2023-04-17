@@ -20,7 +20,7 @@ void main() {
 
   Future<void> successfulGetToDoListArrange() async {
     when(() => getToDoListUseCase()).thenAnswer(
-      (_) async => const Right(mockToDoEntityList),
+      (_) async => Right(mockToDoEntityList),
     );
   }
 
@@ -110,7 +110,7 @@ void main() {
                 (_) async => const Right(true),
               );
 
-              await cubit.updateToDoList(mockNewToDoItem);
+              await cubit.addToDoItemToList(mockNewToDoItem);
 
               expect(cubit.state.toDoList.length, 1);
               expect(cubit.state.isLoading, false);
@@ -136,7 +136,7 @@ void main() {
                 },
               );
 
-              await cubit.updateToDoList(mockNewToDoItem);
+              await cubit.addToDoItemToList(mockNewToDoItem);
 
               expect(cubit.state.errorMessage, isNotEmpty);
               expect(cubit.state.isLoading, false);

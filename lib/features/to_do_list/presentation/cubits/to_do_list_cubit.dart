@@ -82,6 +82,7 @@ class ToDoListCubit extends Cubit<ToDoListState> {
         emit(
           state.copyWith(
             toDoList: newToDoList,
+            isLoading: false,
           ),
         );
         filterToDoList(state.currentFilter);
@@ -151,14 +152,13 @@ class ToDoListCubit extends Cubit<ToDoListState> {
   }
 
   List<ToDoEntity> _sortToDoList(List<ToDoEntity> list) {
-    List<ToDoEntity> sortedlist = list;
-    sortedlist.sort(
+    list.sort(
       (a, b) => a.isCompleted == b.isCompleted
           ? 0
           : a.isCompleted
               ? 1
               : -1,
     );
-    return sortedlist;
+    return list;
   }
 }
