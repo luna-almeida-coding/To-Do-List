@@ -39,12 +39,12 @@ void main() {
     'Should return a GenericFailure from the repository if ToDo List was unsuccessful updated',
     () async {
       when(() => repository.updateToDoList(mockToDoEntityList)).thenAnswer(
-        (_) async => Left(GenericFailure()),
+        (_) async => const Left(GenericFailure()),
       );
 
       final result = await usecase.call(mockToDoEntityList);
 
-      expect(result, Left(GenericFailure()));
+      expect(result, const Left(GenericFailure()));
 
       verify(() => repository.updateToDoList(mockToDoEntityList)).called(1);
     },

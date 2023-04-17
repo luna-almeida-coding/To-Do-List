@@ -15,7 +15,7 @@ class ToDoRepositoryImplementation implements IToDoRepository {
     try {
       return Right(await datasource.getToDoList());
     } on GenericException {
-      return Left(GenericFailure());
+      return const Left(GenericFailure());
     }
   }
 
@@ -24,7 +24,7 @@ class ToDoRepositoryImplementation implements IToDoRepository {
     try {
       return Right(await datasource.updateToDoList(list));
     } on GenericException {
-      return Left(GenericFailure());
+      return const Left(GenericFailure());
     }
   }
 }

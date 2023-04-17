@@ -46,7 +46,7 @@ void main() {
 
         final result = await repository.getToDoList();
 
-        expect(result, Left(GenericFailure()));
+        expect(result, const Left(GenericFailure()));
 
         verify(() => datasource.getToDoList()).called(1);
       },
@@ -77,7 +77,7 @@ void main() {
 
         final result = await repository.updateToDoList(mockToDoEntityList);
 
-        expect(result, Left(GenericFailure()));
+        expect(result, const Left(GenericFailure()));
         verify(() => datasource.updateToDoList(mockToDoEntityList)).called(1);
       },
     );

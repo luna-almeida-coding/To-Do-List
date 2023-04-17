@@ -37,12 +37,12 @@ void main() {
     'Should return a Generic Failure from the repository when calls goes wrong',
     () async {
       when(() => repository.getToDoList()).thenAnswer(
-        (_) async => Left(GenericFailure()),
+        (_) async => const Left(GenericFailure()),
       );
 
       final result = await usecase();
 
-      expect(result, Left(GenericFailure()));
+      expect(result, const Left(GenericFailure()));
 
       verify(() => repository.getToDoList()).called(1);
     },

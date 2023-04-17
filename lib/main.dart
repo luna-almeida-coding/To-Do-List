@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'To Do List',
       home: BlocProvider(
         create: (BuildContext context) => getIt<ToDoListCubit>(),
-        child: HomePage(),
+        child: const HomePage(),
       ),
     );
   }
