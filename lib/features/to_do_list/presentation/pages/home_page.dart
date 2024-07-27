@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController toDoController = TextEditingController();
 
-  late ToDoListCubit toDoListCubit;
+  late final ToDoListCubit toDoListCubit;
 
   @override
   void initState() {
@@ -32,45 +32,133 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar,
-      body: _buildBody(),
-      floatingActionButton: _buildAddToDoItemButton,
-    );
-  }
-
-  PreferredSizeWidget get _buildAppBar {
-    return AppBar(
-      title: const Text(
-        'To do list',
-        style: TextStyle(
-          color: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'To do list',
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
+        centerTitle: true,
+        backgroundColor: AppColors.darkBlue,
       ),
-      centerTitle: true,
-      backgroundColor: AppColors.darkBlue,
+      body: const _BodyWidget(),
+      floatingActionButton: _AddToDoButtonWidget(
+        toDoController: toDoController,
+      ),
     );
   }
+}
 
-  Widget _buildBody() {
+class _BodyWidget extends StatelessWidget {
+  const _BodyWidget();
+
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<ToDoListCubit, ToDoListState>(
       builder: (context, state) {
         return Container(
           color: AppColors.lightBlue,
           padding: const EdgeInsets.all(15),
-          child: Column(
+          child: const Column(
             children: [
-              _buildListButtons(state),
-              const SizedBox(height: 20),
-              Expanded(child: _buildToDoList()),
+              _FiltersButtonsWidget(),
+              SizedBox(height: 20),
+              Expanded(child: _ToDoListWidget()),
             ],
           ),
         );
       },
     );
   }
+}
 
-  Widget _buildListButtons(ToDoListState state) {
-    Widget buildAllListButton() {
+class _ToDoListWidget extends StatefulWidget {
+  const _ToDoListWidget();
+
+  @override
+  State<_ToDoListWidget> createState() => _ToDoListWidgetState();
+}
+
+class _ToDoListWidgetState extends State<_ToDoListWidget> {
+  late final ToDoListCubit toDoListCubit;
+
+  @override
+  void initState() {
+    toDoListCubit = context.read<ToDoListCubit>();
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ToDoListCubit, ToDoListState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.toDoList.isEmpty) return Container();
+
+        if (state.errorMessage.isNotEmpty) return Container();
+
+        return ListView.separated(
+          itemBuilder: (context, index) {
+            return CheckboxListTile(
+              title: Text(
+                state.filteredList[index].description,
+                style: TextStyle(
+                  decoration: state.filteredList[index].isCompleted
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                ),
+              ),
+              secondary: IconButton(
+                onPressed: () => toDoListCubit.removeToDoItem(index),
+                icon: const Icon(
+                  Icons.delete_outline,
+                ),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              value: state.filteredList[index].isCompleted,
+              onChanged: (newValue) {
+                setState(() {
+                  toDoListCubit.updateToDoItemStatus(
+                      index: index, isCompleted: newValue!);
+                });
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider();
+          },
+          itemCount: state.filteredList.length,
+        );
+      },
+    );
+  }
+}
+
+class _FiltersButtonsWidget extends StatefulWidget {
+  const _FiltersButtonsWidget();
+
+  @override
+  State<_FiltersButtonsWidget> createState() => _FiltersButtonsWidgetState();
+}
+
+class _FiltersButtonsWidgetState extends State<_FiltersButtonsWidget> {
+  late final ToDoListCubit toDoListCubit;
+
+  @override
+  void initState() {
+    toDoListCubit = context.read<ToDoListCubit>();
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget buildAllListButton(ToDoListState state) {
       return AppButton(
         isSelected: state.currentFilter == FilterTypes.all,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.all),
@@ -84,20 +172,20 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    Widget buildPendingListButton() {
+    Widget buildPendingListButton(ToDoListState state) {
       return AppButton(
         isSelected: state.currentFilter == FilterTypes.pending,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.pending),
-        text: 'pending',
+        text: 'Pending',
         shape: const RoundedRectangleBorder(),
       );
     }
 
-    Widget buildDoneListButton() {
+    Widget buildDoneListButton(ToDoListState state) {
       return AppButton(
         isSelected: state.currentFilter == FilterTypes.done,
         onTap: () => toDoListCubit.filterToDoList(FilterTypes.done),
-        text: 'done',
+        text: 'Done',
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20),
@@ -107,61 +195,63 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(child: buildAllListButton()),
-        Expanded(child: buildPendingListButton()),
-        Expanded(child: buildDoneListButton()),
-      ],
-    );
+    return BlocBuilder<ToDoListCubit, ToDoListState>(builder: (context, state) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(child: buildAllListButton(state)),
+          Expanded(child: buildPendingListButton(state)),
+          Expanded(child: buildDoneListButton(state)),
+        ],
+      );
+    });
+  }
+}
+
+class _AddToDoButtonWidget extends StatefulWidget {
+  final TextEditingController toDoController;
+
+  const _AddToDoButtonWidget({
+    required this.toDoController,
+  });
+
+  @override
+  State<_AddToDoButtonWidget> createState() => _AddToDoButtonWidgetState();
+}
+
+class _AddToDoButtonWidgetState extends State<_AddToDoButtonWidget> {
+  late final ToDoListCubit toDoListCubit;
+
+  @override
+  void initState() {
+    toDoListCubit = context.read<ToDoListCubit>();
+
+    super.initState();
   }
 
-  Widget _buildToDoList() {
-    return BlocBuilder<ToDoListCubit, ToDoListState>(
-      builder: (context, state) {
-        if (state.isLoading) return const Center(child: CircularProgressIndicator());
-
-        if (state.toDoList.isEmpty) return Container();
-
-        if (state.errorMessage.isNotEmpty) return Container();
-
-        return ListView.separated(
-          itemBuilder: (context, index) {
-            return CheckboxListTile(
-              title: Text(
-                state.filteredList[index].description,
-                style: TextStyle(
-                  decoration: state.filteredList[index].isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                ),
-              ),
-              secondary: IconButton(
-                onPressed: () => toDoListCubit.removeToDoItem(index),
-                icon: const Icon(
-                  Icons.delete_outline,
-                ),
-              ),
-              controlAffinity: ListTileControlAffinity.leading,
-              value: state.filteredList[index].isCompleted,
-              onChanged: (newValue) {
-                setState(() {
-                  toDoListCubit.updateToDoItemStatus(index: index, isCompleted: newValue!);
-                });
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider();
-          },
-          itemCount: state.filteredList.length,
+  void _showAddToDoDialog(
+    BuildContext context,
+    TextEditingController toDoController,
+  ) {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      builder: (BuildContext context) {
+        return _AddToDoDialogWidget(
+          toDoController: toDoController,
+          toDoListCubit: toDoListCubit,
         );
       },
     );
   }
 
-  Widget get _buildAddToDoItemButton {
+  @override
+  Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async => _buildAddToDoDialog(),
+      onPressed: () => _showAddToDoDialog(
+        context,
+        widget.toDoController,
+      ),
       backgroundColor: AppColors.darkBlue,
       tooltip: "Add To Do",
       child: const Icon(
@@ -170,46 +260,60 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
 
-  Future _buildAddToDoDialog() {
-    Future<void> addToDo() async {
-      if (toDoController.text.isNotEmpty) {
-        await toDoListCubit.addToDoItemToList(
-          ToDoEntity(
-            description: toDoController.text.trim(),
-            isCompleted: false,
-          ),
-        );
-        Navigator.pop(context);
-        toDoController.clear();
-      }
+class _AddToDoDialogWidget extends StatelessWidget {
+  final TextEditingController toDoController;
+  final ToDoListCubit toDoListCubit;
+
+  const _AddToDoDialogWidget({
+    required this.toDoController,
+    required this.toDoListCubit,
+  });
+
+  Future<void> addToDo() async {
+    if (toDoController.text.isNotEmpty) {
+      await toDoListCubit.addToDoItemToList(
+        ToDoEntity(
+          description: toDoController.text.trim(),
+          isCompleted: false,
+        ),
+      );
+      toDoController.clear();
     }
+  }
 
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(
-            child: Text('Adicionar To Do'),
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('Adicionar To Do'),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          content: SizedBox(
-            height: 50,
-            child: TextField(
-              controller: toDoController,
-              autofocus: true,
-            ),
+        ],
+      ),
+      content: SizedBox(
+        height: 50,
+        child: TextField(
+          controller: toDoController,
+          autofocus: true,
+        ),
+      ),
+      actions: [
+        Center(
+          child: AppButton(
+            isSelected: true,
+            onTap: () async => addToDo(),
+            text: 'Adicionar',
           ),
-          actions: [
-            Center(
-              child: AppButton(
-                isSelected: true,
-                onTap: () async => addToDo(),
-                text: 'Adicionar',
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ],
     );
   }
 }
