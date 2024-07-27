@@ -1,13 +1,14 @@
 
 # To Do List
 
-A simple To Do List App developed with Flutter + TDD and Clean Architecture
+A simple To Do List App with local storage persistence developed with Flutter + TDD and Clean Architecture
 
 ### Tech Stacks 👩‍💻
 * Flutter 3
 * Clean Architecture
 * Bloc
 * Shared Preferences
+* Unit tests
 
 
 ### How to run 💿
