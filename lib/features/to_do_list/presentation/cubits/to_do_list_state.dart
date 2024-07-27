@@ -1,4 +1,5 @@
-part of 'to_do_list_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:to_do_list/features/to_do_list/domain/entities/to_do_entity.dart';
 
 enum FilterTypes {
   all,
@@ -22,7 +23,8 @@ class ToDoListState extends Equatable {
   });
 
   @override
-  List<Object?> get props => [toDoList, isLoading, errorMessage, filteredList, currentFilter];
+  List<Object?> get props =>
+      [toDoList, isLoading, errorMessage, filteredList, currentFilter];
 
   ToDoListState copyWith({
     List<ToDoEntity>? toDoList,

@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:to_do_list/features/to_do_list/domain/entities/to_do_entity.dart';
 import 'package:to_do_list/features/to_do_list/domain/use_cases/get_to_do_list_use_case.dart';
 import 'package:to_do_list/features/to_do_list/domain/use_cases/update_to_do_list_use_case.dart';
+import 'package:to_do_list/features/to_do_list/presentation/cubits/to_do_list_state.dart';
 
-part 'to_do_list_state.dart';
 
 class ToDoListCubit extends Cubit<ToDoListState> {
   final GetToDoListUseCase toDoListUseCase;
