@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:to_do_list_squad_premiun/core/constants/constants.dart';
-import 'package:to_do_list_squad_premiun/core/local_storage/local_storage.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/data/datasources/to_do_datasource.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/data/models/to_do_model.dart';
+import 'package:to_do_list/core/constants/constants.dart';
+import 'package:to_do_list/core/local_storage/local_storage.dart';
+import 'package:to_do_list/features/to_do_list/data/datasources/to_do_datasource.dart';
+import 'package:to_do_list/features/to_do_list/data/models/to_do_model.dart';
 
 import '../../../../mocks/to_do_mocks.dart';
 

@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:to_do_list_squad_premiun/core/local_storage/local_storage.dart';
-import 'package:to_do_list_squad_premiun/core/service_locators/service_locator.dart';
+import 'package:to_do_list/core/local_storage/local_storage.dart';
+import 'package:to_do_list/core/service_locators/service_locator.dart';
 
 class SharedPreferencesImplementation implements LocalStorage {
   final SharedPreferences _sharedPreferences = getIt<SharedPreferences>();

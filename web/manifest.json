@@ -1,6 +1,6 @@
 {
-    "name": "to_do_list_squad_premiun",
-    "short_name": "to_do_list_squad_premiun",
+    "name": "to_do_list",
+    "short_name": "to_do_list",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

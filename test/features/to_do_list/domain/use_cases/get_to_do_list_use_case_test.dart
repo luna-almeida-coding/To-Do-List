@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:to_do_list_squad_premiun/core/errors/failures/failure.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/domain/repositories/i_to_do_repository.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/domain/use_cases/get_to_do_list_use_case.dart';
+import 'package:to_do_list/core/errors/failures/failure.dart';
+import 'package:to_do_list/features/to_do_list/domain/repositories/i_to_do_repository.dart';
+import 'package:to_do_list/features/to_do_list/domain/use_cases/get_to_do_list_use_case.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../mocks/to_do_mocks.dart';

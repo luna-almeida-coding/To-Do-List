@@ -1,8 +1,8 @@
-import 'package:to_do_list_squad_premiun/core/constants/constants.dart';
-import 'package:to_do_list_squad_premiun/core/errors/exceptions/exceptions.dart';
-import 'package:to_do_list_squad_premiun/core/local_storage/local_storage.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/data/models/to_do_model.dart';
-import 'package:to_do_list_squad_premiun/features/to_do_list/domain/entities/to_do_entity.dart';
+import 'package:to_do_list/core/constants/constants.dart';
+import 'package:to_do_list/core/errors/exceptions/exceptions.dart';
+import 'package:to_do_list/core/local_storage/local_storage.dart';
+import 'package:to_do_list/features/to_do_list/data/models/to_do_model.dart';
+import 'package:to_do_list/features/to_do_list/domain/entities/to_do_entity.dart';
 
 abstract class IToDoDatasource {
   Future<List<ToDoModel>> getToDoList();
